@@ -2,39 +2,40 @@ use std::io::prelude::*;
 use std::io;
 use std::path;
 
-pub struct ViewSettings {
+pub struct RenderSettings {
 	pub x_min: f64,
 	pub x_max: f64,
 	pub y_min: f64,
-	pub y_max: f64
-}
-
-pub struct OutputSettings {
-	pub width: u32,
+	pub y_max: f64,
+	pub max_iterations: u32,
+	pub output_width: u32,
 	pub output_dir: String
 }
 
-impl OutputSettings {
+impl RenderSettings {
 
-	pub fn get_resolution_from_view_settings(&self, view_settings: &ViewSettings) -> f64 {
-		(view_settings.x_min - view_settings.x_max).abs() / self.width as f64
+	pub fn get_resolution(&self) -> f64 {
+		(self.x_min - self.x_max).abs() / self.output_width as f64
 	}
 	
-	pub fn get_height_from_view_settings(&self, view_settings: &ViewSettings) -> u32 {
-		(self.width as f64 / (view_settings.x_min - view_settings.x_max).abs() * (view_settings.y_min - view_settings.y_max).abs()).floor() as u32
+	pub fn get_height(&self) -> u32 {
+		(self.output_width as f64 / (self.x_min - self.x_max).abs() * (self.y_min - self.y_max).abs()).floor() as u32
 	}
 
 }
 
 // prompts the user for their view settings
-pub fn prompt_view_properties(defaults: ViewSettings) -> ViewSettings {
+pub fn prompt_render_settings(defaults: &RenderSettings) -> RenderSettings {
 
-	println!("Please enter your settings for the view. Press ENTER to accept the default value.");
+	println!("Please enter your desired render settings. Press ENTER to accept the default value.");
 
 	let x_min: f64;
 	let x_max: f64;
 	let y_min: f64;
 	let y_max: f64;
+	let max_iterations: u32;
+	let output_width: u32;
+	let output_dir: String;
 
 	// ask for x_min
 	loop {
@@ -140,43 +141,23 @@ pub fn prompt_view_properties(defaults: ViewSettings) -> ViewSettings {
 
 	}
 
-	println!("");
-
-	ViewSettings {
-		x_min,
-		x_max,
-		y_min,
-		y_max
-	}
-
-}
-
-
-// prompts the user for their output settings
-pub fn prompt_output_properties(defaults: OutputSettings) -> OutputSettings {
-
-	println!("Please enter your settings for output. Press ENTER to accept the default value.");
-
-	let width: u32;
-	let output_dir: String;
-
-	// ask for width
+	// ask for max iterations
 	loop {
 
-		print!("WIDTH: ({}) ", defaults.width);
+		print!("MAX ITERATIONS: ({}) ", defaults.max_iterations);
 		io::stdout().flush().ok().expect("Could not flush output."); // Forces output
 
-		let mut input_width = String::new();
-		io::stdin().read_line(&mut input_width)
-			.expect("Failed to read WIDTH.");
+		let mut input_max_iterations = String::new();
+		io::stdin().read_line(&mut input_max_iterations)
+			.expect("Failed to read MAX ITERATIONS.");
 		
-		input_width = input_width.trim().to_string();
+		input_max_iterations = input_max_iterations.trim().to_string();
 
 		// if the user simply hits ENTER, assume default
-		if input_width.len() == 0 {
-			width = defaults.width;
+		if input_max_iterations.len() == 0 {
+			max_iterations = defaults.max_iterations;
 		} else {
-			width = match input_width.parse() {
+			max_iterations = match input_max_iterations.parse() {
 				Ok(num) => num,
 				Err(_) => continue
 			};
@@ -186,7 +167,33 @@ pub fn prompt_output_properties(defaults: OutputSettings) -> OutputSettings {
 		
 	}
 
-	println!("HEIGHT: Will be automatically calculated so as to preserve a 1:1 aspect ratio.");
+	// ask for output width
+	loop {
+
+		print!("OUTPUT WIDTH: ({}) ", defaults.output_width);
+		io::stdout().flush().ok().expect("Could not flush output."); // Forces output
+
+		let mut input_width = String::new();
+		io::stdin().read_line(&mut input_width)
+			.expect("Failed to read OUTPUT WIDTH.");
+		
+		input_width = input_width.trim().to_string();
+
+		// if the user simply hits ENTER, assume default
+		if input_width.len() == 0 {
+			output_width = defaults.output_width;
+		} else {
+			output_width = match input_width.parse() {
+				Ok(num) => num,
+				Err(_) => continue
+			};
+		}
+
+		break
+		
+	}
+
+	println!("OUTPUT HEIGHT: Will be automatically calculated so as to preserve a 1:1 aspect ratio.");
 
 	// ask for output directory
 	loop {
@@ -202,10 +209,10 @@ pub fn prompt_output_properties(defaults: OutputSettings) -> OutputSettings {
 
 		// if the user simply hits ENTER, assume default
 		if input_output_dir.len() == 0 {
-			output_dir = defaults.output_dir;
+			output_dir = defaults.output_dir.clone();
 		} else {
 			output_dir = match path::Path::new(&input_output_dir[..]).exists() {
-				true => input_output_dir,
+				true => input_output_dir.clone(),
 				false => { println!("Specified directory does not exist!"); continue }
 			};
 		}
@@ -216,9 +223,14 @@ pub fn prompt_output_properties(defaults: OutputSettings) -> OutputSettings {
 
 	println!("");
 
-	OutputSettings {
-		width,
-		output_dir
+	RenderSettings {
+		x_min,
+		x_max,
+		y_min,
+		y_max,
+		max_iterations,
+		output_width,
+		output_dir: output_dir.to_string()
 	}
 
 }

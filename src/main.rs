@@ -10,42 +10,38 @@ fn main() {
 
 	println!("\nWelcome to the buddhabrot generator!\n");
 
-	let default_view_settings = settings::ViewSettings {
+	let default_render_settings = settings::RenderSettings {
 		x_min: -2.0,
 		x_max: 2.0,
 		y_min: -1.2,
-		y_max: 1.2
-	};
-
-	let user_view_settings = settings::prompt_view_properties(default_view_settings);
-
-	let default_output_settings = settings::OutputSettings {
-		width: 1920,
+		y_max: 1.2,
+		max_iterations: 10000,
+		output_width: 1920,
 		output_dir: format!("{}/", get_home_directory())
 	};
 
-	let user_output_settings = settings::prompt_output_properties(default_output_settings);
+	let user_render_settings = settings::prompt_render_settings(&default_render_settings);
 
 
 	// mandelbrot set demo
-	let num_pixels = user_output_settings.width * user_output_settings.get_height_from_view_settings(&user_view_settings);
-	let resolution = user_output_settings.get_resolution_from_view_settings(&user_view_settings);
-	let mut current_x = user_view_settings.x_min;
+	let num_pixels = user_render_settings.output_width * user_render_settings.get_height();
+	let resolution = user_render_settings.get_resolution();
+	let mut current_x = user_render_settings.x_min;
 	let mut current_y: f64;
 
 	let mut converged = false;
 	let mut z: complex::Complex;
 	let mut num_iterations_until_covergence: Vec<u32> = Vec::with_capacity(num_pixels as usize);
 
-	while current_x <= user_view_settings.x_max {
+	while current_x <= user_render_settings.x_max {
 
-		current_y = user_view_settings.y_min;
+		current_y = user_render_settings.y_min;
 
-		while current_y <= user_view_settings.y_max {
+		while current_y <= user_render_settings.y_max {
 
 			z = complex::Complex(0.0, 0.0);
 
-			for i in 0..10000 {
+			for i in 0..user_render_settings.max_iterations {
 				z.squared();
 				z.add(complex::Complex(current_x, current_y));
 
@@ -68,9 +64,12 @@ fn main() {
 		current_x += resolution;
 	}
 
-	for i in num_iterations_until_covergence{
-		print!("{} ", i);
-	}
+	// print contents of num_iterations_until_covergence
+	// for i in num_iterations_until_covergence {
+	// 	print!("{} ", i);
+	// }
+
+	println!("");
 
 }
 
