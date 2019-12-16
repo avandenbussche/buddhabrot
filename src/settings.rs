@@ -15,10 +15,13 @@ pub struct OutputSettings {
 }
 
 impl OutputSettings {
+
+	pub fn get_resolution_from_view_settings(&self, view_settings: &ViewSettings) -> f64 {
+		(view_settings.x_min - view_settings.x_max).abs() / self.width as f64
+	}
 	
-	pub fn getHeightFromViewSettings(&self, view_settings: &ViewSettings) -> u32 {
-		let resolution = self.width as f64 / (view_settings.x_min - view_settings.x_max).abs();
-		(resolution.floor() * (view_settings.y_min - view_settings.y_max).abs()) as u32
+	pub fn get_height_from_view_settings(&self, view_settings: &ViewSettings) -> u32 {
+		(self.width as f64 / (view_settings.x_min - view_settings.x_max).abs() * (view_settings.y_min - view_settings.y_max).abs()).floor() as u32
 	}
 
 }
@@ -137,6 +140,8 @@ pub fn prompt_view_properties(defaults: ViewSettings) -> ViewSettings {
 
 	}
 
+	println!("");
+
 	ViewSettings {
 		x_min,
 		x_max,
@@ -208,6 +213,8 @@ pub fn prompt_output_properties(defaults: OutputSettings) -> OutputSettings {
 		break
 		
 	}
+
+	println!("");
 
 	OutputSettings {
 		width,
