@@ -14,6 +14,15 @@ pub struct OutputSettings {
 	pub output_dir: String
 }
 
+impl OutputSettings {
+	
+	pub fn getHeightFromViewSettings(&self, view_settings: &ViewSettings) -> u32 {
+		let resolution = self.width as f64 / (view_settings.x_min - view_settings.x_max).abs();
+		(resolution.floor() * (view_settings.y_min - view_settings.y_max).abs()) as u32
+	}
+
+}
+
 // prompts the user for their view settings
 pub fn prompt_view_properties(defaults: ViewSettings) -> ViewSettings {
 
@@ -149,7 +158,7 @@ pub fn prompt_output_properties(defaults: OutputSettings) -> OutputSettings {
 	// ask for width
 	loop {
 
-		print!("XMIN: ({}) ", defaults.width);
+		print!("WIDTH: ({}) ", defaults.width);
 		io::stdout().flush().ok().expect("Could not flush output."); // Forces output
 
 		let mut input_width = String::new();
@@ -171,6 +180,8 @@ pub fn prompt_output_properties(defaults: OutputSettings) -> OutputSettings {
 		break
 		
 	}
+
+	println!("HEIGHT: Will be automatically calculated so as to preserve a 1:1 aspect ratio.");
 
 	// ask for output directory
 	loop {

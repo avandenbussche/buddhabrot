@@ -5,9 +5,10 @@ extern crate png;
 use std::env;
 
 
+
 fn main() {
 
-	println!("Hello, world!");
+	println!("Welcome to the buddhabrot generator!\n");
 
 	let default_view_settings = settings::ViewSettings {
 		x_min: -2.0,
@@ -25,7 +26,11 @@ fn main() {
 
 	let user_output_settings = settings::prompt_output_properties(default_output_settings);
 
+	println!("{}", user_output_settings.getHeightFromViewSettings(&user_view_settings));
+
 }
+
+// returns the home directory as specified in the $HOME environment variable
 fn get_home_directory() -> String {
 	match env::var("HOME") {
 		Ok(p) => p,
