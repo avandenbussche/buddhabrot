@@ -26,6 +26,10 @@ impl RenderSettings {
 		(self.output_width as f64 / (self.x_min - self.x_max).abs() * (self.y_min - self.y_max).abs()).floor() as u32
 	}
 
+	pub fn get_num_pixels(&self) -> u32 {
+		self.output_width * self.get_height()
+	}
+
 }
 
 // prompts the user for their view settings
