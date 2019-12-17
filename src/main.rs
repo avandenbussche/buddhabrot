@@ -30,7 +30,7 @@ fn main() {
 	let iterations = fractals::mandelbrot(&user_render_settings);
 	
 	// convert num iterations to colors
-	render::render_from_half_of_iterations(&iterations, &user_render_settings);
+	render::render_from_iterations(&iterations, &user_render_settings);
 
 	println!("Rendering completed in {} ms. Enjoy!\n", start_time.elapsed().as_millis());
 

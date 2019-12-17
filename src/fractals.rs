@@ -7,8 +7,7 @@ use rayon::prelude::*;
 
 pub fn mandelbrot(render_settings: &settings::RenderSettings) -> Vec<u32> {
 
-    // optimization: since mandelbrot is symmetric in the real axis, we only need to look at half the points!
-    let par_num_iterations_until_covergence_iter = (0..render_settings.get_num_pixels()/2).into_par_iter().map(|pixel_i| {
+    let par_num_iterations_until_covergence_iter = (0..render_settings.get_num_pixels()).into_par_iter().map(|pixel_i| {
 
 		let current_pixel_x = pixel_i % render_settings.output_width;
 		let current_pixel_y = pixel_i / render_settings.output_width;
