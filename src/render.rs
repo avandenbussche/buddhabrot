@@ -3,12 +3,12 @@ use super::settings;
 use std::path;
 use std::time;
 
-pub fn render_from_iterations(iteration_vector: &Vec<u32>, render_settings: &settings::RenderSettings) {
+pub fn render_from_half_of_iterations(iteration_vector: &Vec<u32>, render_settings: &settings::RenderSettings) {
 
     let mut image_buffer: image::ImageBuffer<image::Rgb<u8>,_> = image::ImageBuffer::new(render_settings.output_width, render_settings.get_height());
 
     let mut i = 0;
-    for current_pixel_y in 0..render_settings.get_height() { 
+    for current_pixel_y in 0..render_settings.get_height()/2 { 
         for current_pixel_x in 0..render_settings.output_width {
 
             let g: u8;
@@ -22,6 +22,10 @@ pub fn render_from_iterations(iteration_vector: &Vec<u32>, render_settings: &set
             let image::Rgb(_data) = *this_pixel;
             *this_pixel = image::Rgb([g, g, g]);
 
+            let this_pixel = image_buffer.get_pixel_mut(current_pixel_x, render_settings.get_height()-1-current_pixel_y);
+            let image::Rgb(_data) = *this_pixel;
+            *this_pixel = image::Rgb([g, g, g]);
+
             i += 1;
 
         }
@@ -29,7 +33,7 @@ pub fn render_from_iterations(iteration_vector: &Vec<u32>, render_settings: &set
 
     // render output
     let save_path_string = format!(
-        "{}buddhabrot_{:?}.png",
+        "{}mandelbrot_{:?}.png",
         render_settings.output_dir,
         time::SystemTime::now().duration_since(time::UNIX_EPOCH).unwrap().as_secs()
     );
