@@ -16,11 +16,11 @@ impl Complex {
         self.1 += c.1;
     }
     
-    pub fn abs(&self) -> f64 {
+    pub fn norm(&self) -> f64 {
         (self.0 * self.0 + self.1 * self.1).sqrt()
     }
 
-    pub fn abs_squared(&self) -> f64 {
+    pub fn norm_squared(&self) -> f64 {
         self.0 * self.0 + self.1 * self.1
     }
 
