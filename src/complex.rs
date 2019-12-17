@@ -20,6 +20,10 @@ impl Complex {
         (self.0 * self.0 + self.1 * self.1).sqrt()
     }
 
+    pub fn abs_squared(&self) -> f64 {
+        self.0 * self.0 + self.1 * self.1
+    }
+
 }
 
 impl fmt::Display for Complex {

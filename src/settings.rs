@@ -14,8 +14,12 @@ pub struct RenderSettings {
 
 impl RenderSettings {
 
-	pub fn get_resolution(&self) -> f64 {
+	pub fn get_resolution_x(&self) -> f64 {
 		(self.x_min - self.x_max).abs() / self.output_width as f64
+	}
+
+	pub fn get_resolution_y(&self) -> f64 {
+		(self.y_min - self.y_max).abs() / self.get_height() as f64
 	}
 	
 	pub fn get_height(&self) -> u32 {
@@ -193,7 +197,7 @@ pub fn prompt_render_settings(defaults: &RenderSettings) -> RenderSettings {
 		
 	}
 
-	println!("OUTPUT HEIGHT: Will be automatically calculated so as to preserve a 1:1 aspect ratio.");
+	println!("OUTPUT HEIGHT will be automatically calculated.");
 
 	// ask for output directory
 	loop {
